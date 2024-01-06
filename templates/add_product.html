@@ -1,0 +1,337 @@
+<!--
+    Pagina proiect: Adauga un produs
+    Autor: Micu Sebastian-Cristian
+    Email: sebastian.micu112@gmail.com
+    Data: 24 septembrie 2023
+
+    DESCRIERE:
+    Aceasta pagina HTML permite utilizatorilor sa adauge un nou produs intr-o baza de date. Ea ofera
+    diverse campuri, precum numele produsului, magazinul, moneda, orasul, perioada de garantie,
+    data achizitiei, imagine de referinta si dovada achizitiei/garantiei.
+
+    INSTRUCTIUNI:
+    1. Asigurati-va ca aveti Bootstrap 4 si Font Awesome 5.15.1 legate in proiect pentru a asigura stilizarea.
+    2. Fisierul "add_product.css" trebuie sa fie localizat in folderul "static" si sa fie disponibil pentru a se asigura stilizarea corespunzatoare.
+    3. Toate rutele precum "url_for('add_product_route')" sau "url_for('home_route')" trebuie sa fie definite in fisierul principal Flask.
+    4. Folositi Flask si functia "get_flashed_messages()" pentru a afisa mesaje de feedback utilizatorului.
+    5. Asigurati-va ca aveti functionalitatea corespunzatoare in backend pentru a procesa si a stoca informatiile trimise prin acest formular.
+    6. Scriptul JavaScript de la sfarsitul paginii contine validari si setari pentru diverse campuri din formular. Daca doriti sa adaugati campuri suplimentare, asigurati-va ca le includeti si in validari daca este necesar.
+    7. Testati intotdeauna functionalitatea in diferite browsere pentru a va asigura ca totul functioneaza corespunzator.
+
+    NOTE:
+    - Pentru dezvoltare ulterioara, puteti considera adaugarea altor validari sau caracteristici, cum ar fi autocompletare pentru campuri sau integrarea cu o baza de date.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaugă un produs</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='add_product.css') }}">
+</head>
+<body>
+    <div class="page-container">
+        <div class="centered-container">
+            <div class="form-bg">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="">
+                            <div class="form-container mx-auto">
+                                <div class="form-icon">
+                                    <i class="fa fa-box"></i>
+                                </div>
+                                <form class="form-horizontal" action="{{ url_for('add_product_route') }}" method="post" enctype="multipart/form-data">
+                                    <h3 class="title">Adaugă un nou produs</h3>
+
+                                    {% with messages = get_flashed_messages() %}
+                                        {% if messages %}
+                                            <div class="flashes">
+                                                {% for message in messages %}
+                                                    <div class="flash">{{ message }}</div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+
+                                    <!-- Produs -->
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">
+                                            Introdu numele produsului.
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="product_name">Nume produs</label>
+                                            <span class="input-icon"><i class="fa fa-tag"></i></span>
+                                            <input class="form-control" type="text" id="product_name" name="product_name" placeholder="Nume produs" value="" maxlength="30">
+                                        </div>
+                                    </div>
+
+                                    <!-- Magazin -->
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">
+                                            Introdu numele magazinului.
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="store">Magazin</label>
+                                            <span class="input-icon"><i class="fa fa-store"></i></span>
+                                            <input class="form-control" type="text" id="store" name="store" placeholder="Magazin" value="" maxlength="30">
+                                        </div>
+                                    </div>
+                                    <!-- Preț -->
+                                        <div class="custom-form-group">
+                                            <div class="additional-text">
+                                                Introdu prețul produsului.
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="price">Preț</label>
+                                                <span class="input-icon"><i class="fa fa-money-bill"></i></span>
+                                                <input class="form-control" type="number" id="price" name="price" placeholder="Preț" value="">
+                                            </div>
+                                        </div>
+                                    <!-- Moneda -->
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">
+                                            Introdu tipul de monedă.
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="currency">Monedă</label>
+                                            <span class="input-icon"><i class="fa fa-money-bill-wave"></i></span>
+                                            <select class="form-control" id="currency" name="currency" style="width: auto; height: calc(100% - 10%);">
+                                                <option value="">Selectează moneda</option>
+                                                <option value="RON">RON</option>
+                                                <option value="EURO">EURO</option>
+                                                <option value="USD">USD (Dolarul american)</option>
+                                                <option value="GBP">GBP</option>
+                                                <option value="CHF">CHF (Francul elvețian)</option>
+                                                <option value="JPY">JPY (Yenul japonez)</option>
+                                                <option value="AUD">AUD (Dolarul australian)</option>
+                                                <option value="CAD">CAD (Dolarul canadian)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Oraș -->
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">
+                                            Introdu orașul magazinului.
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="city">Oraș</label>
+                                            <span class="input-icon"><i class="fa fa-city"></i></span>
+                                            <input class="form-control" type="text" id="city" name="city" placeholder="Oraș" value="" maxlength="30">
+                                        </div>
+                                    </div>
+
+                                    <!-- Perioada de garantie -->
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">
+                                            Introdu perioada de garanție aici, în luni.
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="warranty_period">Perioada de garanție (în luni)</label>
+                                            <span class="input-icon"><i class="fa fa-calendar-check"></i></span>
+                                            <input class="form-control" type="number" id="warranty_period" name="warranty_period" placeholder="Perioada de garanție (în luni)" value="">
+                                        </div>
+                                    </div>
+
+                                    <!-- Data achizitiei -->
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">
+                                            Selectează data achiziției.
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="purchase_date">Data achiziției</label>
+                                            <span class="input-icon"><i class="fa fa-calendar-day"></i></span>
+                                            <input class="form-control" type="date" id="purchase_date" name="purchase_date" placeholder="Data achiziției" value="">
+                                        </div>
+                                    </div>
+
+                                    <!-- Imagine de referinta -->
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">
+                                            Încarcă o imagine a produsului.
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="reference_image_file">Imagine de referință</label>
+                                            <span class="input-icon"><i class="fa fa-image"></i></span>
+                                            <input class="form-control" type="file" id="reference_image_file" name="reference_image_file" placeholder="Încarcă o imagine de referință">
+                                        </div>
+                                    </div>
+
+                                    <!-- Dovada achizitiei -->
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">
+                                            Încarcă dovada achiziției sau garanția.
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="invoice_image_file">Dovada achiziției/garanției</label>
+                                            <span class="input-icon"><i class="fa fa-file-invoice"></i></span>
+                                            <input class="form-control" type="file" id="invoice_image_file" name="invoice_image_file" placeholder="Încarcă dovada achiziției/garanției">
+                                        </div>
+                                    </div>
+
+                                    <button class="btn signin">Adaugă și redirectează</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<a href="{{ url_for('home_route') }}" class="user-signup">Înapoi la pagina principală</a>
+
+    <footer style="background-color: #2ecc71; padding: 10px; text-align: center;">
+        <p style="color: #fff; margin: 0;">Acest proiect a fost realizat de Micu Sebastian-Cristian în Python utilizând framework-ul Flask</p>
+    </footer>
+</body>
+<script>
+    // Funcția pentru a obține data curentă în format YYYY-MM-DD
+    function getCurrentDate() {
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // Ianuarie este 0!
+        const yyyy = today.getFullYear();
+
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // Setează valoarea câmpului cu id-ul "purchase_date" la data curentă
+    document.getElementById("purchase_date").value = getCurrentDate();
+
+    // Funcția pentru a verifica limita maxima in luni de garantie
+
+    document.addEventListener("DOMContentLoaded", function() {
+    // Selecționează elementul de formular cu id-ul 'warranty_period'
+    const warrantyPeriodInput = document.getElementById('warranty_period');
+
+    // Adaugă un event listener pentru evenimentul 'input'
+    warrantyPeriodInput.addEventListener('input', function() {
+        // Verifică dacă valoarea introdusă depășește 360
+        if (parseInt(this.value) > 360) {
+            // Afișează un mesaj de eroare
+            alert('Perioada de garanție nu poate depăși 360 de luni (30 de ani).');
+            // Resetează valoarea la 360
+            this.value = 360;
+        }
+    });
+});
+
+    // Funcția pentru a verifica inputul la field-ul de pret
+document.addEventListener("DOMContentLoaded", function() {
+    // Selecționează elementul de formular cu id-ul 'price'
+    const priceInput = document.getElementById('price');
+
+    // Adaugă un event listener pentru evenimentul 'input'
+    priceInput.addEventListener('input', function() {
+        // Înlocuiește orice caracter care nu este o cifră sau un punct (.) cu un șir gol
+        this.value = this.value.replace(/[^0-9.]/g, '');
+    });
+});
+
+
+    // Funcția pentru a verifica inputul si tipul documentelor incarcate
+document.addEventListener("DOMContentLoaded", function() {
+    // Extensii de fișiere permise
+    const ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'pdf'];
+
+    // Selectează elementele de tip fișier cu id-urile "reference_image_file" și "invoice_image_file"
+    const referenceImageFile = document.getElementById('reference_image_file');
+    const invoiceImageFile = document.getElementById('invoice_image_file');
+
+    function checkFileExtension(inputElement) {
+        // Obține numele fișierului încărcat
+        const fileName = inputElement.files[0].name;
+
+        // Obține extensia fișierului
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+
+        // Verifică dacă extensia fișierului este în lista permisă
+        if (ALLOWED_EXTENSIONS.indexOf(fileExtension) === -1) {
+            // Afișează un mesaj de eroare și resetează câmpul
+            alert(`Extensia fișierului nu este permisă. Extensiile permise sunt: ${ALLOWED_EXTENSIONS.join(', ')}`);
+            inputElement.value = '';
+        }
+    }
+
+    // Adaugă un event listener pentru evenimentul "change" pentru ambele câmpuri de fișiere
+    referenceImageFile.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            checkFileExtension(this);
+        }
+    });
+
+    invoiceImageFile.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            checkFileExtension(this);
+        }
+    });
+});
+document.addEventListener("DOMContentLoaded", function() {
+    // Elemente ale formularului
+    const form = document.querySelector('form');
+    const currencySelect = document.getElementById('currency');
+
+    // Funcția pentru a verifica dacă s-a selectat o monedă
+    function checkCurrencySelection() {
+        // Obține valoarea selectată din elementul <select>
+        const selectedCurrency = currencySelect.value;
+
+        if (selectedCurrency === "" || selectedCurrency === "Selectează moneda") {
+            // Afișează un mesaj de eroare
+            alert('Vă rugăm să selectați o monedă înainte de a trimite formularul.');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Adaugă un event listener pentru evenimentul "submit" al formularului
+    form.addEventListener('submit', function(event) {
+        // Verifică dacă s-a selectat o monedă
+        if (!checkCurrencySelection()) {
+            // Previne trimiterea formularului dacă nu s-a selectat o monedă
+            event.preventDefault();
+        }
+    });
+});
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Selectăm formularul și butonul de submit
+    var form = document.querySelector("form");
+    var submitButton = form.querySelector("button[type='submit']");
+
+    // Adăugăm un eveniment de ascultare pentru trimiterea formularului
+    form.addEventListener("submit", function(event) {
+        // Iterăm prin toate câmpurile de input din formular
+        var inputs = form.querySelectorAll("input");
+        var selects = form.querySelectorAll("select");
+        var fields = Array.from(inputs).concat(Array.from(selects)); // Combine input-urile și select-urile
+
+        for (var i = 0; i < fields.length; i++) {
+            var field = fields[i];
+
+            // Verificăm dacă câmpul este gol
+            if (field.value.trim() === "") {
+                // Oprim trimiterea formularului
+                event.preventDefault();
+
+                // Afișăm un mesaj de avertizare
+                alert("Vă rugăm să completați toate câmpurile.");
+
+                // Ieșim din bucla de verificare pentru a afișa doar un singur mesaj
+                break;
+            }
+        }
+    });
+});
+</script>
+
+</html>
