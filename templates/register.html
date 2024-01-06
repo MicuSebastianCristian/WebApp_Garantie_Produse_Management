@@ -1,0 +1,84 @@
+<!--
+    Pagina: Înregistrare
+    Autor: Micu Sebastian-Cristian
+    Email: sebastian.micu112@gmail.com
+    Data Creării: Septembrie 2023
+
+    Descriere:
+    Această pagină este destinată înregistrării noilor utilizatori. Ea oferă un formular în care se pot introduce datele necesare
+    pentru crearea unui cont nou și gestionează mesajele flash pentru feedback-ul utilizatorului.
+
+    Instrucțiuni:
+    1. Asigurați-vă că toate link-urile către resursele externe (CSS, JS) sunt funcționale și accesibile.
+    2. Conectați această pagină la logica de backend corespunzătoare pentru a valida și stoca datele introduse de utilizator.
+    3. Modificați adresa de email și data de creare conform necesităților dvs.
+    4. În cazul în care se dorește modificarea structurii, aveți grijă la integrarea cu CSS-ul și cu logica de backend.
+
+    Biblioteci externe:
+    - Bootstrap (pentru stilizare și componente UI)
+    - Font Awesome (pentru icoane)
+
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Înregistrare</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='register.css') }}">
+</head>
+<body>
+    <div class="form-bg d-flex align-items-center justify-content-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-sm-8">
+                    <div class="form-container">
+                        <div class="form-icon">
+                            <i class="fa fa-user-edit"></i>
+                        </div>
+                        <h2 class="title">Înregistrare</h2>
+                        <form class="form-horizontal" method="post">
+                            <div class="form-group">
+                                <div class="input-label">
+                                    <span class="input-icon"><i class="fa fa-user"></i></span>
+                                    <span>Nume de utilizator</span>
+                                </div>
+                                <input class="form-control" type="text" placeholder="Nume de utilizator" id="username" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-label">
+                                    <span class="input-icon"><i class="fa fa-lock"></i></span>
+                                    <span>Parolă</span>
+                                </div>
+                                <input class="form-control" type="password" placeholder="Parolă" id="password" name="password" required>
+                            </div>
+
+                            <div class="flash-message">
+                                {% with messages = get_flashed_messages() %}
+                                    {% if messages %}
+                                        <div class="flashes">
+                                            {% for message in messages %}
+                                                <div class="flash">{{ message }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <button class="btn register-button" type="submit">Înregistrare</button>
+                        </form>
+                        <div class="user-signup">Aveți deja un cont? <a href="login">Autentificați-vă aici.</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background-color: #2ecc71; padding: 10px; text-align: center;">
+        <p style="color: #fff; margin: 0;">Acest proiect a fost realizat de Micu Sebastian-Cristian în Python utilizând framework-ul Flask</p>
+    </footer>
+</body>
+</html>
