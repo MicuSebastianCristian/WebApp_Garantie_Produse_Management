@@ -1,0 +1,268 @@
+<!--
+    Pagina proiect: Acasă
+    Autor: Micu Sebastian-Cristian
+    Email: sebastian.micu112@gmail.com
+    Data: septembrie 2023
+
+    DESCRIERE:
+    Aceasta pagina HTML afiseaza o lista de produse pentru utilizatori. Utilizatorii pot cauta produse,
+    se pot deloga, pot adauga noi produse sau pot modifica/sterge produsele existente. Paginatia este
+    implementata pentru a afisa un numar limitat de 9 produse pe fiecare pagina.
+
+    INSTRUCȚIUNI:
+    1. Asigurați-vă că aveți Bootstrap 4 și Font Awesome 5.15.1 legate în proiect pentru a asigura stilizarea.
+    2. Fisierul "home.css" trebuie sa fie localizat in folderul "static" si sa fie disponibil pentru a se asigura stilizarea corespunzatoare.
+    3. Toate rutele precum " url_for('logout_route') " sau " url_for('add_product_route') " trebuie sa fie definite in fisierul principal Flask.
+    4. Folosiți Flask și funcția "get_flashed_messages()" pentru a afisa mesaje de feedback utilizatorului.
+    5. Scriptul JavaScript de la sfarsitul paginii ofera functionalitati pentru cautarea produselor, paginatie si evenimente pentru diverse butoane. Daca adaugati functionalitati suplimentare, asigurati-va ca le integrati corespunzator in script.
+    6. Testati intotdeauna functionalitatea in diferite browsere pentru a va asigura ca totul functioneaza corespunzator.
+
+    NOTE:
+    - Pentru dezvoltare ulterioara, puteti considera imbunatatirea paginatiei, adaugarea de filtre avansate pentru produse sau implementarea unor functii de sortare.
+-->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acasă</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body class="body">
+    <div id="animation-container">
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Caută produs..." onkeyup="searchProduct()">
+            </div>
+
+            <a class="logout-button" href="{{ url_for('logout_route') }}">Logout</a>
+            <h1>Bun venit în Managerul de Produse</h1>
+            <a class="add-product-button" href="{{ url_for('add_product_route') }}">Adaugă un Produs</a>
+
+            {% if products %}
+                <div class="product-list">
+                    {% for product in products %}
+                        <div class="product">
+                            <h3>{{ product.name }}</h3>
+                            <p class="price">Preț: {{ product.price }} {{ product.currency }}</p>
+                            <div class="product-image-container">
+                                <img src="{{ url_for('static', filename='images/' + product.reference_image_file) }}" alt="{{ product.name }}">
+                            </div>
+                            <div class="product-info">
+                                <p class="purchase-date">Data Achiziției: {% if product.purchase_date %}{{ product.purchase_date }}{% else %}N/A{% endif %}</p>
+                                <p class="store">Magazin: {% if product.store %}{{ product.store }}{% else %}N/A{% endif %}</p>
+                                <p class="city">Oraș: {% if product.city %}{{ product.city }}{% else %}N/A{% endif %}</p>
+                                <p class="warranty-status bold {% if product.warranty_expiry and product.warranty_expiry >= current_time.date() %}active{% else %}expired{% endif %}">
+                                    {% if product.warranty_expiry %}
+                                        {% if product.warranty_expiry >= current_time.date() %}
+                                            Acest produs este în garanție.
+                                        {% else %}
+                                            Acest produs nu mai este în garanție.
+                                        {% endif %}
+                                    {% else %}
+                                        {% if product.warranty_period and product.purchase_date %}
+                                            {% set warranty_expiry = product.purchase_date + timedelta(days=product.warranty_period) %}
+                                            {% if warranty_expiry >= current_time.date() %}
+                                                Acest produs este în garanție.
+                                            {% else %}
+                                                Acest produs nu mai este în garanție.
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </p>
+
+                                <!-- ... -->
+                                <div class="buttons">
+                                    <a class="download-button" href="{{ url_for('download_file_route', filename=product.invoice_image_file) }}">Descarcă factura/bon fiscal</a>
+                                    <a class="modify-button" href="{{ url_for('edit_product_route', id=product.id) }}">Modifică</a> <!-- Butonul nou aici -->
+                                    <form action="{{ url_for('delete_product_route', id=product.id) }}" method="post" onsubmit="return confirmDelete('{{ product.name }}')">
+                                        <input class="delete-button" type="submit" value="Șterge">
+                                    </form>
+                                </div>
+                                <!-- ... -->
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Nu aveți produse adăugate.</p>
+            {% endif %}
+
+            <div id="paginationContainer" class="pagination-controls"></div>
+        </div>
+
+        <footer style="background-color: #2ecc71; padding: 10px; text-align: center;">
+            <p style="color: #fff; margin: 0;">Acest proiect a fost realizat de Micu Sebastian-Cristian în Python utilizând framework-ul Flask</p>
+        </footer>
+    </div>
+</body>
+
+<script>
+    // Function to search for a product
+    function searchProduct() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const products = document.getElementsByClassName('product');
+
+        for (let i = 0; i < products.length; i++) {
+            const product = products[i];
+            const productName = product.getElementsByTagName('h3')[0];
+            const textValue = productName.textContent || productName.innerText;
+
+            if (textValue.toUpperCase().indexOf(filter) > -1) {
+                product.style.display = "block";
+            } else {
+                product.style.display = "none";
+            }
+        }
+    }
+
+    // Function to paginate products and display page numbers
+    function paginateProducts() {
+        const products = Array.from(document.getElementsByClassName('product'));
+        const itemsPerPage = 9; // Afișăm 9 produse pe pagină
+        let currentPage = 1;
+        const numberOfPages = Math.ceil(products.length / itemsPerPage);
+        const paginationContainer = document.getElementById('paginationContainer');
+
+        function showPage(page) {
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            products.forEach((product, index) => {
+                if (index >= start && index < end) {
+                    product.style.display = "block";
+                } else {
+                    product.style.display = "none";
+                }
+            });
+        }
+
+        function updatePageNumbers() {
+            let html = "";
+
+            if (currentPage > 1) {
+                html += `<button class="page-number" data-page="${currentPage - 1}">Pagina anterioară</button>`;
+            }
+
+            if (currentPage > 2) {
+                html += '<button class="page-number" data-page="1">1</button>';
+                html += '<span>...</span>';
+            }
+
+            for (let i = Math.max(1, currentPage - 1); i <= Math.min(numberOfPages, currentPage + 1); i++) {
+                if (i === currentPage) {
+                    html += `<button class="page-number active" data-page="${i}">${i}</button>`;
+                } else {
+                    html += `<button class="page-number" data-page="${i}">${i}</button>`;
+                }
+            }
+
+            if (currentPage < numberOfPages - 1) {
+                html += '<span>...</span>';
+                html += `<button class="page-number" data-page="${numberOfPages}">${numberOfPages}</button>`;
+            }
+
+            if (currentPage < numberOfPages) {
+                html += `<button class="page-number" data-page="${currentPage + 1}">Pagina următoare</button>`;
+            }
+
+            paginationContainer.innerHTML = html;
+
+            const pageNumbers = document.getElementsByClassName('page-number');
+            for (let i = 0; i < pageNumbers.length; i++) {
+                pageNumbers[i].addEventListener('click', function() {
+                    currentPage = parseInt(this.getAttribute('data-page'));
+                    showPage(currentPage);
+                    updatePageNumbers();
+                    window.scrollTo(0, 0);
+                });
+            }
+        }
+
+        showPage(currentPage);
+        updatePageNumbers();
+    }
+
+    window.onload = function() {
+        paginateProducts();
+    };
+
+    // Limit the number of products to 9 per page
+    document.addEventListener('DOMContentLoaded', function() {
+        paginateProducts();
+    });
+
+    // Function to confirm delete action
+    function confirmDelete(productName) {
+        return confirm('Sunteți sigur că doriți să ștergeți produsul ' + productName + '?');
+    }
+
+    // Function to handle the click event for the green circle
+    function handleGreenCircleClick() {
+        const addProductButton = document.querySelector('.add-product-button');
+        if (addProductButton) {
+            window.location.href = addProductButton.getAttribute('href');
+        }
+    }
+
+    // Add click event listener to the green circle
+    const greenCircle = document.createElement('div');
+    greenCircle.style.position = 'fixed';
+    greenCircle.style.bottom = '10px';
+    greenCircle.style.left = '10px';
+    greenCircle.style.width = '50px';
+    greenCircle.style.height = '50px';
+    greenCircle.style.backgroundColor = 'green';
+    greenCircle.style.color = 'white';
+    greenCircle.style.borderRadius = '50%';
+    greenCircle.style.display = 'flex';
+    greenCircle.style.justifyContent = 'center';
+    greenCircle.style.alignItems = 'center';
+    greenCircle.style.cursor = 'pointer';
+    greenCircle.innerHTML = '+';
+    greenCircle.addEventListener('click', handleGreenCircleClick);
+    document.body.appendChild(greenCircle);
+</script>
+<script>
+    // Funcție pentru a ascunde butonul "Adaugă un produs" pe dispozitive mobile
+function hideAddProductButtonOnMobile() {
+    const addProductButton = document.querySelector('.add-product-button');
+    if (window.innerWidth <= 850) {
+        addProductButton.style.display = 'none'; // Ascunde butonul pe dispozitive mobile
+    } else {
+        addProductButton.style.display = 'inline-block'; // Afișează butonul pe dispozitive desktop
+    }
+}
+
+// Ascunde butonul la încărcarea paginii și monitorizează redimensionările ferestrei
+window.addEventListener('load', hideAddProductButtonOnMobile);
+window.addEventListener('resize', hideAddProductButtonOnMobile);
+
+// Selectează toate elementele cu clasa "price", "purchase-date", "store" și "city"
+const priceElements = document.querySelectorAll('.price');
+const purchaseDateElements = document.querySelectorAll('.purchase-date');
+const storeElements = document.querySelectorAll('.store');
+const cityElements = document.querySelectorAll('.city');
+
+// Schimbă culoarea textului la negru pentru fiecare element
+priceElements.forEach(element => {
+    element.style.color = 'black';
+});
+
+purchaseDateElements.forEach(element => {
+    element.style.color = 'black';
+});
+
+storeElements.forEach(element => {
+    element.style.color = 'black';
+});
+
+cityElements.forEach(element => {
+    element.style.color = 'black';
+});
+
+</script>
+</html>
