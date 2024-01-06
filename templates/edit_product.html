@@ -1,0 +1,259 @@
+ <!-- Titlul paginii
+Autor: Micu Sebastian Cristian
+Email: sebastian.micu112@gmail.com
+Data proiectului: Septembrie 2023
+GitHub: https://github.com/MicuSebastianCristian
+
+Descriere:
+Acest fisier HTML reprezinta o interfata de editare a produselor intr-o aplicatie de Management al Garantiilor Produselor.
+Interfata permite utilizatorilor sa modifice informatii legate de un produs, inclusiv numele, magazinul, moneda, orasul si durata garantiei.
+Interfata este construita folosind bootstrap si font-awesome pentru stilizare, iar functiile JavaScript incluse permit validarea datelor introduse de utilizatori.
+
+Instructiuni de folosire a codului:
+
+- Asigura-te ca toate link-urile catre bibliotecile externe, cum ar fi bootstrap si font-awesome, sunt accesibile.
+- Link-ul pentru CSS, " url_for('static', filename='edit_product.css') ", indica faptul ca ar trebui sa ai un fisier numit "edit_product.css" in folderul "static" al aplicatiei Flask.
+- Orice referinta la acolade duble indica faptul ca este utilizat un template engine (Jinja2), deci trebuie sa te asiguri ca datele sunt transmise corect catre acest template de catre codul Python din backend.
+- Verifica toate rutele si endpoint-urile mentionate in atributul "action" al formularului pentru a te asigura ca sunt corect definite in aplicatia Flask.
+- Functiile JavaScript din partea de jos a paginii sunt folosite pentru validarea datelor introduse in formular; trebuie sa te asiguri ca aceste functii sunt compatibile cu browserele targetate.
+
+In esenta, acest fisier HTML ofera o interfata intuitiva pentru editarea produselor intr-o aplicatie de management al garantiilor produselor.
+Pentru a utiliza aceasta interfata, trebuie sa integrezi acest cod HTML in aplicatia Flask, sa te asiguri ca toate rutele si endpoint-urile sunt corect definite, si sa furnizezi toate datele necesare template-ului.-->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Editează un produs</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='edit_product.css') }}">
+</head>
+<body>
+    <div class="page-container">
+        <div class="centered-container">
+            <div class="form-bg">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="">
+                            <div class="form-container mx-auto">
+                                <div class="form-icon">
+                                    <i class="fa fa-box"></i>
+                                </div>
+                                    <form class="form-horizontal" action="{{ url_for('edit_product_route', id=product.id) }}" method="post" enctype="multipart/form-data">
+                                    <h3 class="title">Editează un produs existent</h3>
+
+                                    {% with messages = get_flashed_messages() %}
+                                        {% if messages %}
+                                            <div class="flashes">
+                                                {% for message in messages %}
+                                                    <div class="flash">{{ message }}</div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">Introdu numele produsului.</div>
+                                        <div class="form-group">
+                                            <label for="product_name">Nume produs</label>
+                                            <span class="input-icon"><i class="fa fa-tag"></i></span>
+                                            <input class="form-control" type="text" id="product_name" name="product_name" value="{{ existing_product_name }}" maxlength="30">
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">Introdu numele magazinului.</div>
+                                        <div class="form-group">
+                                            <label for="store">Magazin</label>
+                                            <span class="input-icon"><i class="fa fa-store"></i></span>
+                                            <input class="form-control" type="text" id="store" name="store" value="{{ existing_store_name }}" maxlength="30">
+                                        </div>
+                                    </div>
+                                        <div class="custom-form-group">
+                                            <div class="additional-text">Introdu prețul produsului.</div>
+                                            <div class="form-group">
+                                                <label for="price">Preț</label>
+                                                <span class="input-icon"><i class="fa fa-money-bill"></i></span>
+                                                <input class="form-control" type="number" id="price" name="price" value="{{ existing_price }}">
+                                            </div>
+                                        </div>
+                                         <div class="custom-form-group">
+                                            <div class="additional-text">
+                                                Introdu tipul de monedă.
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="currency">Monedă</label>
+                                                <span class="input-icon"><i class="fa fa-money-bill-wave"></i></span>
+                                                <select class="form-control" id="currency" name="currency" style="width: auto; height: calc(100% - 10%);">
+                                                    <option value="">Selectează moneda</option>
+                                                    <option value="RON" {% if existing_currency == 'RON' %}selected{% endif %}>RON</option>
+                                                    <option value="EURO" {% if existing_currency == 'EURO' %}selected{% endif %}>EURO</option>
+                                                    <option value="USD" {% if existing_currency == 'USD' %}selected{% endif %}>USD (Dolarul american)</option>
+                                                    <option value="GBP" {% if existing_currency == 'GBP' %}selected{% endif %}>GBP</option>
+                                                    <option value="CHF" {% if existing_currency == 'CHF' %}selected{% endif %}>CHF (Francul elvețian)</option>
+                                                    <option value="JPY" {% if existing_currency == 'JPY' %}selected{% endif %}>JPY (Yenul japonez)</option>
+                                                    <option value="AUD" {% if existing_currency == 'AUD' %}selected{% endif %}>AUD (Dolarul australian)</option>
+                                                    <option value="CAD" {% if existing_currency == 'CAD' %}selected{% endif %}>CAD (Dolarul canadian)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">Introdu orașul magazinului.</div>
+                                        <div class="form-group">
+                                            <label for="city">Oraș</label>
+                                            <span class="input-icon"><i class="fa fa-city"></i></span>
+                                            <input class="form-control" type="text" id="city" name="city" value="{{ existing_city }}" maxlength="30">
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">Introduceți durata garanției, în luni.</div>
+                                        <div class="form-group">
+                                            <label for="warranty_period">Perioada de garanție (în luni)</label>
+                                            <span class="input-icon"><i class="fa fa-calendar-check"></i></span>
+                                            <input class="form-control" type="number" id="warranty_period" name="warranty_period" value="{{ existing_warranty_period }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-form-group">
+                                        <div class="additional-text">Selectează data achiziției.</div>
+                                        <div class="form-group">
+                                            <label for="purchase_date">Data achiziției</label>
+                                            <span class="input-icon"><i class="fa fa-calendar-day"></i></span>
+                                            <input class="form-control" type="date" id="purchase_date" name="purchase_date" value="{{ existing_purchase_date }}">
+                                        </div>
+                                    </div>
+
+                                    <button class="btn signin">Actualizează</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="{{ url_for('home_route') }}" class="user-signup">Înapoi la pagina principală</a>
+
+    <footer style="background-color: #2ecc71; padding: 10px; text-align: center;">
+        <p style="color: #fff; margin: 0;">Acest proiect a fost realizat de Micu Sebastian-Cristian în Python utilizând framework-ul Flask</p>
+    </footer>
+</body>
+<script>
+    // Funcția pentru a verifica limita maxima in luni de garantie
+
+    document.addEventListener("DOMContentLoaded", function() {
+    // Selecționează elementul de formular cu id-ul 'warranty_period'
+    const warrantyPeriodInput = document.getElementById('warranty_period');
+
+    // Adaugă un event listener pentru evenimentul 'input'
+    warrantyPeriodInput.addEventListener('input', function() {
+        // Verifică dacă valoarea introdusă depășește 360
+        if (parseInt(this.value) > 360) {
+            // Afișează un mesaj de eroare
+            alert('Perioada de garanție nu poate depăși 360 de luni (30 de ani).');
+            // Resetează valoarea la 360
+            this.value = 360;
+        }
+    });
+});
+
+    // Funcția pentru a verifica inputul la field-ul de pret
+document.addEventListener("DOMContentLoaded", function() {
+    // Selecționează elementul de formular cu id-ul 'price'
+    const priceInput = document.getElementById('price');
+
+    // Adaugă un event listener pentru evenimentul 'input'
+    priceInput.addEventListener('input', function() {
+        // Înlocuiește orice caracter care nu este o cifră sau un punct (.) cu un șir gol
+        this.value = this.value.replace(/[^0-9.]/g, '');
+    });
+});
+document.addEventListener("DOMContentLoaded", function() {
+    // Elemente ale formularului
+    const form = document.querySelector('form');
+    const currencySelect = document.getElementById('currency');
+
+    // Funcția pentru a verifica dacă s-a selectat o monedă
+    function checkCurrencySelection() {
+        // Obține valoarea selectată din elementul <select>
+        const selectedCurrency = currencySelect.value;
+
+        if (selectedCurrency === "" || selectedCurrency === "Selectează moneda") {
+            // Afișează un mesaj de eroare
+            alert('Vă rugăm să selectați o monedă înainte de a trimite formularul.');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Adaugă un event listener pentru evenimentul "submit" al formularului
+    form.addEventListener('submit', function(event) {
+        // Verifică dacă s-a selectat o monedă
+        if (!checkCurrencySelection()) {
+            // Previne trimiterea formularului dacă nu s-a selectat o monedă
+            event.preventDefault();
+        }
+    });
+});
+
+</script>
+<script>
+    // Selecționează formularul
+const form = document.querySelector('form');
+
+// Adaugă un ascultător de eveniment pentru evenimentul 'submit' al formularului
+form.addEventListener('submit', function(event) {
+    // Verifică fiecare câmp în parte
+    const productName = document.getElementById('product_name').value;
+    const storeName = document.getElementById('store').value;
+    const price = document.getElementById('price').value;
+    const currency = document.getElementById('currency').value;
+    const city = document.getElementById('city').value;
+    const warrantyPeriod = document.getElementById('warranty_period').value;
+    const purchaseDate = document.getElementById('purchase_date').value;
+
+    // Verifică dacă oricare dintre câmpuri este necompletat sau depășește 30 de caractere
+    if (productName.length === 0 || productName.length >= 30 ||
+        storeName.length === 0 || storeName.length >= 30 ||
+        price.length === 0 ||
+        currency === "" ||
+        city.length === 0 || city.length >= 30 ||
+        warrantyPeriod.length === 0 ||
+        purchaseDate.length === 0) {
+        alert('Toate câmpurile trebuie completate și să aibă mai puțin de 30 de caractere.');
+        event.preventDefault(); // Oprire trimitere formular
+        return;
+    }
+
+    // Dacă toate verificările trec, formularul este trimis
+});
+
+</script>
+<script>
+    // Selecționează elementul de input pentru garantie
+const warrantyPeriodInput = document.getElementById('warranty_period');
+
+// Adaugă un ascultător de eveniment pentru evenimentul 'input' al câmpului de garantie
+warrantyPeriodInput.addEventListener('input', function() {
+    // Obține valoarea introdusă pentru garantie ca număr
+    const warrantyValue = parseInt(this.value);
+
+    // Verifică dacă valoarea depășește 360
+    if (warrantyValue > 360) {
+        alert('Perioada de garanție nu poate depăși 360 de luni (30 de ani).');
+        // Resetează valoarea la 360
+        this.value = 360;
+    }
+});
+
+</script>
+</html>
