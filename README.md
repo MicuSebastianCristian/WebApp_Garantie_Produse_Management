@@ -15,7 +15,7 @@ Proiectul este realizat pentru examenul de obtinere a certificatului de "Ajutor 
 
 Instructiuni de folosire a codului:
 
-Asigurati-va ca aveti toate bibliotecile necesare instalate, inclusiv Flask, Flask-SQLAlchemy, Werkzeug si altele asemenea.
+Asigurati-va ca aveti toate bibliotecile necesare instalate, inclusiv Flask, Flask-SQLAlchemy, Werkzeug, flask_login, flask_migrate, os, werkzeug.security, werkzeug.utils, datetime, PIL, models.
 Puteti instala aceste biblioteci utilizand comanda "pip install nume_bibliotecii" in terminal sau linia de comanda.
 
 Configurati calea catre baza de date in fisierul Python utilizand variabila "app.config['SQLALCHEMY_DATABASE_URI']".
