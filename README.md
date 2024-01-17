@@ -22,13 +22,13 @@ Configurati calea catre baza de date in fisierul Python utilizand variabila "app
 In exemplul dat, se utilizeaza baza de date SQLite, iar calea catre fisierul bazei de date este specificata ca 'sqlite:///site.db'.
 Puteti modifica aceasta cale in functie de preferintele dvs.
 
-Pentru a porni serverul Flask, rulati acest fisier Python in terminal sau linia de comanda folosind comanda "python nume_fisier.py", unde 'nume_fisier.py' reprezinta numele acestui fisier.
+Pentru a porni serverul Flask, rulati acest fisier Python in terminal sau linia de comanda folosind comanda "python nume_fisier.py", unde 'nume_fisier.py' reprezinta numele fisierului de baza Flask.
 Dupa rulare, aplicatia va deveni accesibila la adresa "http://localhost:5001/" intr-un browser web.
 
 Asigurati-va ca aveti toate fisierele HTML necesare pentru functionarea aplicatiei.
-Detalii specifice despre aceste fisiere HTML nu sunt furnizate in comentariile din cod, dar ele sunt esentiale pentru afisarea si interactiunea cu aplicatia.
+Detalii specifice despre aceste fisiere HTML nu sunt furnizate in comentariile din cod, dar ele sunt esentiale pentru afisarea si interactiunea cu aplicatia si se pot descarca si adapta din fisierul templates al acestui proiect.
 Aceste fisiere HTML ar trebui sa fie parte a frontend-ului aplicatiei si sa ofere utilizatorilor o interfata de utilizare adecvata pentru gestionarea garantiilor produselor.
 
 
-Pentru a utiliza aplicatia, este necesar sa aveti Python instalat si sa respectati instructiunile mentionate mai sus sau o puteti accesa introducand credetialele "test" si "test, intrand pe urmatorul url securizat: https://sebastianmicu.pythonanywhere.com/login 
+Pentru a utiliza aplicatia, este necesar sa aveti Python instalat si sa respectati instructiunile mentionate mai sus, sau o puteti accesa direct introducand credetialele "test" si "test, intrand pe urmatorul url securizat: https://sebastianmicu.pythonanywhere.com/login 
 """
